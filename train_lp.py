@@ -3,7 +3,7 @@ import torch.nn as nn
 from torch_geometric.data import Data
 from typing import List
 import numpy as np
-from evaluate_roland import evaluate_mrr, get_negative_samples, evaluate_fixed_split
+from evaluate_lp import evaluate_mrr, get_negative_samples, evaluate_fixed_split
 
 class StatefulGNNWrapper(nn.Module):
     def __init__(self, base_model, num_nodes: int, device: torch.device, use_node_emb: bool = True, node_emb_dim: int = 128):

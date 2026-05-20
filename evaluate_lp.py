@@ -70,8 +70,3 @@ def evaluate_fixed_split(model, snapshots: list, start_idx: int) -> float:
         mrrs.append(mrr)
     return np.mean(mrrs) if mrrs else 0.0
 
-def evaluate_live_update(model, current_snapshot: Data) -> float:
-    """ Evaluates MRR on the current snapshot before it is used for training. """
-    if current_snapshot.edge_index.size(1) == 0:
-        return 0.0
-    return evaluate_mrr(model, current_snapshot)

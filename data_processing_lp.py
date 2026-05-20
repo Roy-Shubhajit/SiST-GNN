@@ -105,7 +105,7 @@ def process_snapshots(df: pd.DataFrame, src_col: str, dst_col: str, time_col: st
         
     return snapshots
 
-def load_roland_dataset(dataset_name: str, data_root: str = "datasets/roland") -> List[Data]:
+def load_lp_dataset(dataset_name: str, data_root: str = "datasets/roland") -> List[Data]:
     """
     Loads and processes a specific dataset into discrete temporal snapshots.
     """
@@ -174,5 +174,5 @@ def load_roland_dataset(dataset_name: str, data_root: str = "datasets/roland") -
 
 if __name__ == "__main__":
     # Quick test
-    snaps = load_roland_dataset("uci-message")
+    snaps = load_lp_dataset("uci-message")
     print(snaps[0])
