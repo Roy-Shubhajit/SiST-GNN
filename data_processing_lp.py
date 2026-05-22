@@ -115,23 +115,23 @@ def load_lp_dataset(dataset_name: str, data_root: str = "datasets/roland") -> Li
     snapshots = []
     if dataset_name == "bitcoin-alpha":
         df = pd.read_csv(os.path.join(extracted_path, "soc-sign-bitcoinalpha.csv"), names=['src', 'dst', 'rating', 'time'])
-        snapshots = process_snapshots(df, 'src', 'dst', 'time', freq="2W")
-    
+        snapshots = process_snapshots(df, 'src', 'dst', 'time', freq="W")
+
     elif dataset_name == "bitcoin-otc":
         df = pd.read_csv(os.path.join(extracted_path, "soc-sign-bitcoinotc.csv"), names=['src', 'dst', 'rating', 'time'])
-        snapshots = process_snapshots(df, 'src', 'dst', 'time', freq="2W")
-        
+        snapshots = process_snapshots(df, 'src', 'dst', 'time', freq="W")
+
     elif dataset_name == "uci-message":
         df = pd.read_csv(os.path.join(extracted_path, "CollegeMsg.txt"), sep=' ', names=['src', 'dst', 'time'])
         snapshots = process_snapshots(df, 'src', 'dst', 'time', freq="W")
-        
+
     elif dataset_name == "reddit-body":
         df = pd.read_csv(os.path.join(extracted_path, "soc-redditHyperlinks-body.tsv"), sep='\t')
-        snapshots = process_snapshots(df, 'SOURCE_SUBREDDIT', 'TARGET_SUBREDDIT', 'TIMESTAMP', freq="ME")
-        
+        snapshots = process_snapshots(df, 'SOURCE_SUBREDDIT', 'TARGET_SUBREDDIT', 'TIMESTAMP', freq="W")
+
     elif dataset_name == "reddit-title":
         df = pd.read_csv(os.path.join(extracted_path, "soc-redditHyperlinks-title.tsv"), sep='\t')
-        snapshots = process_snapshots(df, 'SOURCE_SUBREDDIT', 'TARGET_SUBREDDIT', 'TIMESTAMP', freq="ME")
+        snapshots = process_snapshots(df, 'SOURCE_SUBREDDIT', 'TARGET_SUBREDDIT', 'TIMESTAMP', freq="W")
         
     elif dataset_name == "as-733":
         # AS-733 consists of multiple txt files. We read them sequentially.

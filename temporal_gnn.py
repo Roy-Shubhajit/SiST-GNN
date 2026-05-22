@@ -93,12 +93,13 @@ class TemporalGNNLayer(nn.Module):
     def _build_augmented_edges(
         edge_index: torch.Tensor,   # [2, E]
         num_nodes:  int,
-    ) -> torch.Tensor:              # [2, 2E]
+    ) -> torch.Tensor:              # [2, 2E + N]
         """
-        Extend *edge_index* with one cross-time edge per original edge.
+        Extend *edge_index* with cross-time and self-loop-temporal edges.
 
-        For every (u, v) ∈ edge_index we append (u, v + N), connecting each
-        source node to the temporal counterpart of its neighbour.
+        For every (u, v) ∈ edge_index we append (v + N, u) — connecting the
+        temporal counterpart of v back to u — plus (u + N, u) — a self-loop
+        between u and its own temporal counterpart.
 
         Parameters
         ----------
@@ -107,14 +108,15 @@ class TemporalGNNLayer(nn.Module):
 
         Returns
         -------
-        Augmented edge list, shape [2, 2E].
+        Augmented edge list, shape [2, 2E + N].
         """
         src, tgt = edge_index[0], edge_index[1]
 
-        temporal_tgt = tgt + num_nodes                         # v → v + N
-        cross_edges  = torch.stack([src, temporal_tgt], dim=0) # [2, E]
-
-        return torch.cat([edge_index, cross_edges], dim=1)     # [2, 2E]
+        temporal_tgt = tgt + num_nodes                         # v + N → v
+        cross_edges  = torch.stack([temporal_tgt, src], dim=0) # [2, E]
+        self_loop_temporal_tgt = src + num_nodes                     # u → u + N
+        self_loop_edges = torch.stack([self_loop_temporal_tgt, src], dim=0) # [2, E]
+        return torch.cat([edge_index, cross_edges, self_loop_edges], dim=1)     # [2, 2E + N]
 
     @staticmethod
     def _build_augmented_edge_attr(
@@ -124,7 +126,8 @@ class TemporalGNNLayer(nn.Module):
             return None
         if edge_attr.dim() == 1:
             edge_attr = edge_attr.unsqueeze(1)
-        return torch.cat([edge_attr, edge_attr], dim=0)
+        # 3E entries: original, cross-time, and self-loop-temporal edges.
+        return torch.cat([edge_attr, edge_attr, edge_attr], dim=0)
 
     def _apply_gnn(
         self,

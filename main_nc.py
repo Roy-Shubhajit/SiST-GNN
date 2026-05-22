@@ -32,7 +32,7 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--lr", type=float, default=1e-3)
     p.add_argument("--hidden-dim", type=int, default=128)
     p.add_argument("--num-epochs", type=int, default=50)
-    p.add_argument("--patience", type=int, default=5)
+    p.add_argument("--patience", type=int, default=20)
     p.add_argument(
         "--bucket-hours",
         type=float,
