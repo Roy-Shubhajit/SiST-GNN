@@ -1,6 +1,6 @@
 # SiST-GNN
 
-**SiST-GNN: Simultaneous Spatial-Temporal Message Passing for Dynamic Graph Representation Learning**
+**'Si'multaneous 'S'patial-'T'emporal Message Passing for Dynamic Graph Representation Learning**
 
 A unified framework for dynamic graph representation learning that performs
 *simultaneous* spatial and temporal message passing on a temporally
