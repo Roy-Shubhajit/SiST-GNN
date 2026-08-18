@@ -1,0 +1,33 @@
+{
+  "timestamp": "20260722-115546",
+  "task": "node_forecasting",
+  "config": {
+    "dataset": "ca",
+    "data_root": "datasets/largest",
+    "years": "2019",
+    "device": "cuda",
+    "model": "lstm",
+    "num_layers": 2,
+    "gnn_type": "GCNConv",
+    "seq_len": 12,
+    "horizon": 12,
+    "hidden_dim": 64,
+    "batch_size": 64,
+    "lr": 0.001,
+    "weight_decay": 0.0001,
+    "clip_grad": 5.0,
+    "dropout": 0.1,
+    "num_epochs": 5,
+    "patience": 30,
+    "seed": 42,
+    "no_node_emb": false,
+    "no_edge_weight": false,
+    "adj_binary": false,
+    "out_dir": "results"
+  },
+  "results": {
+    "ca": {
+      "error": "Could not find processed data for 'ca'.\n  expected: datasets/largest/ca/2019/his.npz\n  or raw  : datasets/largest/ca/ca_his_2019.h5\nDownload LargeST from https://www.kaggle.com/datasets/liuxu77/largest, run its data/generate_data_for_training.py, and point --data-root at the resulting 'data/' directory (see README, 'Node forecasting')."
+    }
+  }
+}

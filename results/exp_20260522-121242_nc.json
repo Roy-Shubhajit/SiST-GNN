@@ -1,0 +1,29 @@
+{
+  "timestamp": "20260522-121242",
+  "task": "node_classification",
+  "config": {
+    "dataset": "reddit",
+    "data_root": "datasets/nc",
+    "device": "cuda",
+    "model": "lstm",
+    "num_layers": 2,
+    "gnn_type": "GCNConv",
+    "lr": 0.001,
+    "hidden_dim": 256,
+    "num_epochs": 100,
+    "patience": 5,
+    "bucket_hours": 6.0,
+    "seed": 12,
+    "no_node_emb": false,
+    "no_edge_emb": false,
+    "pos_weight": "balanced",
+    "out_dir": "results"
+  },
+  "results": {
+    "reddit": {
+      "val_auc": 0.6994594264293588,
+      "test_auc": 0.7198332950125319,
+      "pos_weight": 2484.4074074074074
+    }
+  }
+}

@@ -1,0 +1,54 @@
+{
+  "timestamp": "20260814-102943",
+  "task": "link_prediction",
+  "pipeline": "roland_port",
+  "eval_method": "paper_fixed_split",
+  "config": {
+    "dataset": "uci-message",
+    "mode": "paper_fixed_split",
+    "data_root": "datasets/roland",
+    "undirected": "yes",
+    "min_edges": 10,
+    "device": "cuda",
+    "hidden_dim": 128,
+    "num_layers": 2,
+    "gnn_type": "GCNConv",
+    "decoder": "mlp",
+    "node_features": "learned",
+    "edge_features": "learned",
+    "dropout": 0.1,
+    "weight_decay": 1e-05,
+    "lr": 0.001,
+    "num_epochs": 100,
+    "train_num_neg": 20,
+    "loss": "margin",
+    "num_neg": 1000,
+    "seed": 1,
+    "out_dir": "results/roland_port/paper_fixed_split_und-yes_loss-margin/mlp_node-learned_edge-learned/uci-message/seed1"
+  },
+  "results": {
+    "lp": {
+      "uci-message": {
+        "mrr": 0.20975836118062338,
+        "num_eval_snapshots": 3,
+        "per_snapshot_mrr": [
+          {
+            "t": 25,
+            "mrr": 0.16616974771022797
+          },
+          {
+            "t": 26,
+            "mrr": 0.26125919818878174
+          },
+          {
+            "t": 27,
+            "mrr": 0.2018461376428604
+          }
+        ],
+        "recall@1": 0.15075493603944778,
+        "recall@3": 0.21155633529027304,
+        "recall@10": 0.348432054122289
+      }
+    }
+  }
+}

@@ -1,0 +1,15 @@
+
+==================================================================
+ROLAND pipeline + SiST-GNN encoder
+  dataset=uci-message  mode=paper_fixed_split  decoder=mlp
+  node_features=learned  loss=bce  seed=1
+==================================================================
+  snapshot filter (>= 10 edges): 29 -> 28
+  T=28  N=1899  start_compute_mrr=25
+  edge features: learned (raw dim 1)
+Snapshot 0025 | MRR 0.1849
+Snapshot 0026 | MRR 0.2635
+Snapshot 0027 | MRR 0.2998
+
+uci-message  MRR = 0.249414  (3 eval snapshots)
+saved -> results/roland_port/paper_fixed_split_und-yes_loss-bce/mlp_node-learned_edge-learned/uci-message/seed1/exp_20260814-105858_lp.json

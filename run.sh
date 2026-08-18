@@ -6,28 +6,29 @@
 #          Dynamic Graph Representation Learning".
 #
 #  This single script reproduces every headline number in the paper:
-#    --task lp   : dynamic Link Prediction        (Roland datasets)
-#    --task nc   : dynamic Node Classification    (JODIE datasets)
-#    --task all  : both                            (default)
+#    --task lp        : dynamic Link Prediction        (Roland datasets)
+#    --task nc        : dynamic Node Classification    (JODIE datasets)
+#    --task all       : all three                       (default)
 #
 #  Flags
-#    --task lp|nc|all          Which experiment to run. Default: all.
+#    --task lp|nc|all           Which experiment to run. Default: all.
 #    --seeds N                 Run with seeds 0..N-1 (default: 3).
 #    --epochs N                Number of training epochs (default: 50).
 #    --verify                  Smoke-test mode: 2 epochs, one small dataset
-#                              per task (uci-message LP + wikipedia NC).
+#                              per task (uci-message LP + wikipedia NC +
 #    --lp-eval METHOD          fixed-split | live-update | both. Default: both.
 #    --lp-datasets ds          Comma-separated LP dataset subset.
 #    --nc-datasets ds          Comma-separated NC dataset subset.
+#                              (sd|gba|gla|ca|synthetic). Default: sd.
 #    --out-dir DIR             Where to drop the JSON logs and summaries
 #                              (default: results).
 #    --python PATH             Python interpreter (default: python).
 #    -h | --help               Print this header and exit.
 #
 #  Outputs
-#    results/exp_<ts>_lp.json     One file per LP run (per dataset/eval)
-#    results/exp_<ts>_nc.json     One file per NC run
-#    results/lp_summary.csv       Aggregated mean +/- std across seeds
+#    results/exp_<ts>_lp.json       One file per LP run (per dataset/eval)
+#    results/exp_<ts>_nc.json       One file per NC run
+#    results/lp_summary.csv         Aggregated mean +/- std across seeds
 #    results/nc_summary.csv
 # =============================================================================
 set -euo pipefail
@@ -37,7 +38,7 @@ cd "$HERE"
 
 TASK="all"
 NUM_SEEDS=3
-NUM_EPOCHS=50
+NUM_EPOCHS=100
 VERIFY=0
 LP_EVAL="both"
 LP_DATASETS_DEFAULT="bitcoin-otc,bitcoin-alpha,uci-message,reddit-title,reddit-body,as-733"
@@ -154,9 +155,10 @@ run_nc() {
       echo ">> NC  dataset=$ds  seed=$seed"
       $PYTHON main_nc.py \
         --dataset "$ds" --model lstm --gnn-type GCNConv \
-        --num-layers 2 --hidden-dim 128 \
+        --num-layers 2 --hidden-dim 256 \
         --num-epochs "$NUM_EPOCHS" --patience 5 \
         --bucket-hours 6 --seed "$seed" \
+        --pos-weight "balanced" \
         --out-dir "$OUT_DIR"
     done
   done
@@ -192,11 +194,15 @@ print(f"Wrote {out} ({len(agg_test)} rows)")
 PY
 }
 
+# -----------------------------------------------------------------------------
+# Node Regression / Traffic Forecasting (LargeST)
+# -----------------------------------------------------------------------------
+
 case "$TASK" in
-  lp)  run_lp ;;
-  nc)  run_nc ;;
-  all) run_lp; run_nc ;;
-  *)   echo "Unknown --task: $TASK (use lp|nc|all)" >&2; exit 1 ;;
+  lp)        run_lp ;;
+  nc)        run_nc ;;
+  all)       run_lp; run_nc ;;
+  *)         echo "Unknown --task: $TASK (use lp|nc|all)" >&2; exit 1 ;;
 esac
 
 banner "Done. Logs in $OUT_DIR/"

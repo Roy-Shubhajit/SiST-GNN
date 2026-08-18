@@ -1,0 +1,97 @@
+========================================================================
+  SiST-GNN  |  25-seed node classification sweep
+  device=cuda  gnn=SAGEConv  hidden=256  bucket=3.0h  pos_weight=balanced
+  datasets=['wikipedia', 'reddit', 'mooc']  seeds=0..24  (25 seeds)
+========================================================================
+
+[wikipedia] loading bundle ...
+[NC] wikipedia: bucket=3.0h → 248 non-empty snapshots over 31.0 days, 9228 nodes, 157474 interactions, pos-rate=0.0014, train_end_snap=172, val_end_snap=205
+[wikipedia] num_nodes=9228 snaps=248 train_end=172 val_end=205
+  seed=00  val_auc=0.8600  test_auc=0.8542  (25.3s)
+  seed=01  val_auc=0.8682  test_auc=0.8602  (24.4s)
+  seed=02  val_auc=0.8698  test_auc=0.8753  (24.4s)
+  seed=03  val_auc=0.8772  test_auc=0.8734  (22.5s)
+  seed=04  val_auc=0.8783  test_auc=0.8696  (22.4s)
+  seed=05  val_auc=0.8796  test_auc=0.8689  (22.3s)
+  seed=06  val_auc=0.8771  test_auc=0.8483  (22.2s)
+  seed=07  val_auc=0.8719  test_auc=0.8832  (22.2s)
+  seed=08  val_auc=0.8760  test_auc=0.8827  (24.4s)
+  seed=09  val_auc=0.8680  test_auc=0.8798  (24.8s)
+  seed=10  val_auc=0.8804  test_auc=0.8757  (24.9s)
+  seed=11  val_auc=0.8729  test_auc=0.8794  (25.0s)
+  seed=12  val_auc=0.8779  test_auc=0.8683  (25.0s)
+  seed=13  val_auc=0.8786  test_auc=0.8760  (25.2s)
+  seed=14  val_auc=0.8749  test_auc=0.8749  (25.2s)
+  seed=15  val_auc=0.8750  test_auc=0.8766  (25.3s)
+  seed=16  val_auc=0.8761  test_auc=0.8670  (25.3s)
+  seed=17  val_auc=0.8858  test_auc=0.8717  (25.2s)
+  seed=18  val_auc=0.8788  test_auc=0.8597  (25.2s)
+  seed=19  val_auc=0.8740  test_auc=0.8701  (33.1s)
+  seed=20  val_auc=0.8731  test_auc=0.8650  (25.3s)
+  seed=21  val_auc=0.8750  test_auc=0.8788  (25.2s)
+  seed=22  val_auc=0.8714  test_auc=0.8760  (23.3s)
+  seed=23  val_auc=0.8742  test_auc=0.8805  (22.9s)
+  seed=24  val_auc=0.8642  test_auc=0.8827  (22.9s)
+[wikipedia]  TEST AUC = 0.8719 +/- 0.0090  (n=25)
+
+[reddit] loading bundle ...
+[NC] reddit: bucket=3.0h → 248 non-empty snapshots over 31.0 days, 10985 nodes, 672447 interactions, pos-rate=0.0005, train_end_snap=174, val_end_snap=209
+[reddit] num_nodes=10985 snaps=248 train_end=174 val_end=209
+  seed=00  val_auc=0.6033  test_auc=0.6938  (29.3s)
+  seed=01  val_auc=0.5917  test_auc=0.6632  (28.8s)
+  seed=02  val_auc=0.6047  test_auc=0.6836  (28.7s)
+  seed=03  val_auc=0.5813  test_auc=0.6682  (28.8s)
+  seed=04  val_auc=0.5962  test_auc=0.6556  (32.8s)
+  seed=05  val_auc=0.6148  test_auc=0.7002  (28.9s)
+  seed=06  val_auc=0.6299  test_auc=0.7044  (28.9s)
+  seed=07  val_auc=0.5947  test_auc=0.6834  (32.9s)
+  seed=08  val_auc=0.5914  test_auc=0.6667  (28.8s)
+  seed=09  val_auc=0.6066  test_auc=0.6706  (30.0s)
+  seed=10  val_auc=0.6026  test_auc=0.6642  (34.7s)
+  seed=11  val_auc=0.6113  test_auc=0.6782  (29.4s)
+  seed=12  val_auc=0.6144  test_auc=0.6975  (28.8s)
+  seed=13  val_auc=0.5953  test_auc=0.6743  (28.9s)
+  seed=14  val_auc=0.6033  test_auc=0.6799  (28.9s)
+  seed=15  val_auc=0.5915  test_auc=0.6708  (30.5s)
+  seed=16  val_auc=0.6059  test_auc=0.6816  (34.4s)
+  seed=17  val_auc=0.6077  test_auc=0.6929  (29.1s)
+  seed=18  val_auc=0.6083  test_auc=0.6864  (28.9s)
+  seed=19  val_auc=0.5892  test_auc=0.6401  (49.8s)
+  seed=20  val_auc=0.6128  test_auc=0.7063  (34.9s)
+  seed=21  val_auc=0.6007  test_auc=0.6778  (29.7s)
+  seed=22  val_auc=0.5792  test_auc=0.6692  (28.8s)
+  seed=23  val_auc=0.6187  test_auc=0.6929  (28.9s)
+  seed=24  val_auc=0.6091  test_auc=0.6786  (28.9s)
+[reddit]  TEST AUC = 0.6792 +/- 0.0157  (n=25)
+
+[mooc] loading bundle ...
+[NC] mooc: bucket=3.0h → 237 non-empty snapshots over 29.8 days, 7145 nodes, 411749 interactions, pos-rate=0.0099, train_end_snap=175, val_end_snap=206
+[mooc] num_nodes=7145 snaps=237 train_end=175 val_end=206
+  seed=00  val_auc=0.7173  test_auc=0.6993  (25.6s)
+  seed=01  val_auc=0.7216  test_auc=0.6981  (29.6s)
+  seed=02  val_auc=0.7291  test_auc=0.7001  (25.3s)
+  seed=03  val_auc=0.7190  test_auc=0.7006  (27.6s)
+  seed=04  val_auc=0.6969  test_auc=0.6820  (25.6s)
+  seed=05  val_auc=0.7223  test_auc=0.7180  (27.3s)
+  seed=06  val_auc=0.6992  test_auc=0.6932  (25.8s)
+  seed=07  val_auc=0.7236  test_auc=0.6957  (25.5s)
+  seed=08  val_auc=0.7329  test_auc=0.7028  (27.9s)
+  seed=09  val_auc=0.7072  test_auc=0.6987  (25.9s)
+  seed=10  val_auc=0.7185  test_auc=0.7011  (25.4s)
+  seed=11  val_auc=0.7063  test_auc=0.6923  (25.5s)
+  seed=12  val_auc=0.7201  test_auc=0.7061  (25.4s)
+  seed=13  val_auc=0.7259  test_auc=0.7052  (25.4s)
+  seed=14  val_auc=0.7278  test_auc=0.7016  (25.4s)
+  seed=15  val_auc=0.7273  test_auc=0.7026  (25.4s)
+  seed=16  val_auc=0.7344  test_auc=0.7068  (25.3s)
+  seed=17  val_auc=0.7286  test_auc=0.7020  (25.5s)
+  seed=18  val_auc=0.7151  test_auc=0.6946  (25.5s)
+  seed=19  val_auc=0.7350  test_auc=0.7081  (25.4s)
+  seed=20  val_auc=0.7185  test_auc=0.7034  (25.4s)
+  seed=21  val_auc=0.7248  test_auc=0.7078  (25.4s)
+  seed=22  val_auc=0.7163  test_auc=0.7009  (25.3s)
+  seed=23  val_auc=0.7188  test_auc=0.6918  (25.4s)
+  seed=24  val_auc=0.7273  test_auc=0.7021  (27.3s)
+[mooc]  TEST AUC = 0.7006 +/- 0.0069  (n=25)
+
+Done. summary -> results/nc_25seeds/summary.json

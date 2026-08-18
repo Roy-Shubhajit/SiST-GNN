@@ -1,0 +1,10 @@
+Dataset,Eval_Method,Mean_MRR,Std_MRR,N_Runs
+as-733,live-update,0.593028,0.000741,5
+bitcoin-alpha,fixed-split,0.773931,0.008427,5
+bitcoin-alpha,live-update,0.519552,0.024981,5
+bitcoin-otc,fixed-split,0.830452,0.009823,5
+bitcoin-otc,live-update,0.551134,0.025121,5
+reddit-body,live-update,0.694777,0.020279,5
+reddit-title,live-update,0.720782,0.002721,5
+uci-message,fixed-split,0.480430,0.011590,5
+uci-message,live-update,0.328325,0.001301,5

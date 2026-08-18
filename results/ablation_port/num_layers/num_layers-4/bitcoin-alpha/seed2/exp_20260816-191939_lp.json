@@ -1,0 +1,142 @@
+{
+  "timestamp": "20260816-191939",
+  "task": "link_prediction",
+  "pipeline": "roland_port",
+  "eval_method": "paper_fixed_split",
+  "config": {
+    "dataset": "bitcoin-alpha",
+    "mode": "paper_fixed_split",
+    "data_root": "datasets/roland",
+    "undirected": "yes",
+    "min_edges": 10,
+    "device": "cuda",
+    "hidden_dim": 128,
+    "num_layers": 4,
+    "gnn_type": "GCNConv",
+    "decoder": "dot",
+    "node_features": "learned",
+    "edge_features": "learned",
+    "dropout": 0.1,
+    "weight_decay": 1e-05,
+    "lr": 0.001,
+    "num_epochs": 100,
+    "train_num_neg": 20,
+    "loss": "margin",
+    "num_neg": 1000,
+    "seed": 2,
+    "out_dir": "/hdfs1/Data/Shubhajit/Project/SiST-GNN/results/ablation_port/num_layers/num_layers-4/bitcoin-alpha/seed2"
+  },
+  "results": {
+    "lp": {
+      "bitcoin-alpha": {
+        "mrr": 0.33383131444454195,
+        "num_eval_snapshots": 25,
+        "per_snapshot_mrr": [
+          {
+            "t": 229,
+            "mrr": 0.2818651795387268
+          },
+          {
+            "t": 230,
+            "mrr": 0.3658103942871094
+          },
+          {
+            "t": 231,
+            "mrr": 0.3710815906524658
+          },
+          {
+            "t": 232,
+            "mrr": 0.4468432664871216
+          },
+          {
+            "t": 233,
+            "mrr": 0.4037783741950989
+          },
+          {
+            "t": 234,
+            "mrr": 0.26725465059280396
+          },
+          {
+            "t": 235,
+            "mrr": 0.27485573291778564
+          },
+          {
+            "t": 236,
+            "mrr": 0.6300177574157715
+          },
+          {
+            "t": 237,
+            "mrr": 0.25302812457084656
+          },
+          {
+            "t": 238,
+            "mrr": 0.20446428656578064
+          },
+          {
+            "t": 239,
+            "mrr": 0.34403717517852783
+          },
+          {
+            "t": 240,
+            "mrr": 0.42592594027519226
+          },
+          {
+            "t": 241,
+            "mrr": 0.19228117167949677
+          },
+          {
+            "t": 242,
+            "mrr": 0.3123425245285034
+          },
+          {
+            "t": 243,
+            "mrr": 0.3793066442012787
+          },
+          {
+            "t": 244,
+            "mrr": 0.3370155394077301
+          },
+          {
+            "t": 245,
+            "mrr": 0.48506107926368713
+          },
+          {
+            "t": 246,
+            "mrr": 0.27713820338249207
+          },
+          {
+            "t": 247,
+            "mrr": 0.3915419280529022
+          },
+          {
+            "t": 248,
+            "mrr": 0.250781387090683
+          },
+          {
+            "t": 249,
+            "mrr": 0.503997802734375
+          },
+          {
+            "t": 250,
+            "mrr": 0.14490154385566711
+          },
+          {
+            "t": 251,
+            "mrr": 0.12591755390167236
+          },
+          {
+            "t": 252,
+            "mrr": 0.2855367660522461
+          },
+          {
+            "t": 253,
+            "mrr": 0.3909982442855835
+          }
+        ],
+        "recall@1": 0.19493199110031129,
+        "recall@3": 0.40131148040294645,
+        "recall@10": 0.6389258563518524
+      }
+    }
+  }
+}

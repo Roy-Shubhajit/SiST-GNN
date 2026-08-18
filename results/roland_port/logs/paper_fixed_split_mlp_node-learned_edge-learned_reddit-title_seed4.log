@@ -1,0 +1,30 @@
+
+==================================================================
+ROLAND pipeline + SiST-GNN encoder
+  dataset=reddit-title  mode=paper_fixed_split  decoder=mlp
+  node_features=learned  loss=margin  seed=4
+==================================================================
+  snapshot filter (>= 10 edges): 178 -> 178
+  T=178  N=54075  start_compute_mrr=160
+  edge features: learned (raw dim 1)
+Snapshot 0160 | MRR 0.4493
+Snapshot 0161 | MRR 0.3542
+Snapshot 0162 | MRR 0.4492
+Snapshot 0163 | MRR 0.4431
+Snapshot 0164 | MRR 0.4295
+Snapshot 0165 | MRR 0.4580
+Snapshot 0166 | MRR 0.4397
+Snapshot 0167 | MRR 0.4506
+Snapshot 0168 | MRR 0.4472
+Snapshot 0169 | MRR 0.4475
+Snapshot 0170 | MRR 0.4494
+Snapshot 0171 | MRR 0.4437
+Snapshot 0172 | MRR 0.4463
+Snapshot 0173 | MRR 0.4067
+Snapshot 0174 | MRR 0.4464
+Snapshot 0175 | MRR 0.4432
+Snapshot 0176 | MRR 0.4572
+Snapshot 0177 | MRR 0.4393
+
+reddit-title  MRR = 0.438910  (18 eval snapshots)
+saved -> results/roland_port/paper_fixed_split_und-yes_loss-margin/mlp_node-learned_edge-learned/reddit-title/seed4/exp_20260815-060852_lp.json

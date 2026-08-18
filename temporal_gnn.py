@@ -51,6 +51,7 @@ class TemporalGNNLayer(nn.Module):
         input_dim:  int,
         hidden_dim: int,
         gnn_type:   str = "GCNConv",
+        full_self_temporal: bool = False,
         **gnn_kwargs,
     ) -> None:
         super().__init__()
@@ -61,6 +62,7 @@ class TemporalGNNLayer(nn.Module):
 
         self.input_dim  = input_dim
         self.hidden_dim = hidden_dim
+        self.full_self_temporal = full_self_temporal
 
         # Project X_i from input_dim → hidden_dim so both halves of X_new
         # share the same feature width before stacking.
@@ -89,45 +91,62 @@ class TemporalGNNLayer(nn.Module):
     # Internal helpers
     # ------------------------------------------------------------------
 
-    @staticmethod
     def _build_augmented_edges(
+        self,
         edge_index: torch.Tensor,   # [2, E]
         num_nodes:  int,
-    ) -> torch.Tensor:              # [2, 2E + N]
+    ) -> torch.Tensor:
         """
-        Extend *edge_index* with cross-time and self-loop-temporal edges.
+        Extend *edge_index* with cross-time and self-temporal edges.
 
         For every (u, v) ∈ edge_index we append (v + N, u) — connecting the
-        temporal counterpart of v back to u — plus (u + N, u) — a self-loop
-        between u and its own temporal counterpart.
+        temporal counterpart of v back to u.
 
-        Parameters
-        ----------
-        edge_index : Original edge list, shape [2, E].
-        num_nodes  : Number of original nodes (N).
+        The self-temporal edges (i + N, i) inject node i's own recurrent state
+        into its output. Two variants:
 
-        Returns
-        -------
-        Augmented edge list, shape [2, 2E + N].
+        ``full_self_temporal=False`` (legacy)
+            One per *edge*, at the source: ``(u + N, u)`` for each (u, v).
+            Shape [2, 3E]. Nodes that never appear as a source therefore get no
+            self-temporal edge at all, and since both cross- and self-edges also
+            target only source nodes, such a node's output carries **zero**
+            dependence on H — it has no temporal memory. High-degree sources
+            additionally get their self-edge repeated deg(u) times, which skews
+            the GCN normalisation.
+
+        ``full_self_temporal=True`` (Algorithm 1)
+            One per *node*: ``{(N+i, i)}`` for i = 1..N. Shape [2, 2E + N].
+            Every node sees its own history exactly once.
         """
         src, tgt = edge_index[0], edge_index[1]
 
         temporal_tgt = tgt + num_nodes                         # v + N → v
-        cross_edges  = torch.stack([temporal_tgt, src], dim=0) # [2, E]
-        self_loop_temporal_tgt = src + num_nodes                     # u → u + N
-        self_loop_edges = torch.stack([self_loop_temporal_tgt, src], dim=0) # [2, E]
-        return torch.cat([edge_index, cross_edges, self_loop_edges], dim=1)     # [2, 2E + N]
+        cross_edges  = torch.stack([temporal_tgt, src], dim=0)  # [2, E]
 
-    @staticmethod
+        if self.full_self_temporal:
+            nodes = torch.arange(num_nodes, device=edge_index.device)
+            self_loop_edges = torch.stack([nodes + num_nodes, nodes], dim=0)  # [2, N]
+        else:
+            self_loop_edges = torch.stack([src + num_nodes, src], dim=0)      # [2, E]
+
+        return torch.cat([edge_index, cross_edges, self_loop_edges], dim=1)
+
     def _build_augmented_edge_attr(
+        self,
         edge_attr: Optional[torch.Tensor],
+        num_nodes: int,
     ) -> Optional[torch.Tensor]:
         if edge_attr is None:
             return None
         if edge_attr.dim() == 1:
             edge_attr = edge_attr.unsqueeze(1)
-        # 3E entries: original, cross-time, and self-loop-temporal edges.
-        return torch.cat([edge_attr, edge_attr, edge_attr], dim=0)
+        if not self.full_self_temporal:
+            # 3E entries: original, cross-time, and per-edge self-temporal.
+            return torch.cat([edge_attr, edge_attr, edge_attr], dim=0)
+        # 2E + N entries; give the N self-temporal edges a neutral weight on the
+        # same scale as the observed edge attributes.
+        fill = edge_attr.mean(dim=0, keepdim=True).expand(num_nodes, -1)
+        return torch.cat([edge_attr, edge_attr, fill], dim=0)
 
     def _apply_gnn(
         self,
@@ -155,12 +174,72 @@ class TemporalGNNLayer(nn.Module):
                 except TypeError:
                     # If edge_weight also fails, just use the GNN without edge info
                     X_out = self.gnn(X_new, aug_edges)
-        
+
         # Project back to hidden_dim if needed (e.g., after multi-head attention)
         if self.gnn_output_proj is not None:
             X_out = self.gnn_output_proj(X_out)
-        
+
         return X_out
+
+    def _apply_gnn_folded(
+        self,
+        X_new: torch.Tensor,            # [2*B*N, hidden]  laid out [X_proj(B,N); H(B,N)]
+        edge_index: torch.Tensor,       # [2, E]  SINGLE-graph edges (shared by the batch)
+        edge_attr: Optional[torch.Tensor],  # [E] / [E,1] single-graph weights, or None
+        num_graphs: int,
+    ) -> torch.Tensor:
+        """Shared-adjacency batched GCN: one SpMM instead of B block-diagonal copies.
+
+        Exploits that every sample in the batch lives on the SAME graph, so the
+        augmented adjacency is normalized once (2N x 2N) and the batch rides in
+        the dense columns:  einsum('nm,mbc->nbc', A_hat, X)  executed as
+        A_hat @ X.view(2N, B*d).  Mathematically identical to feeding the
+        block-diagonal batch through ``self.gnn`` (a PyG ``GCNConv``, whose
+        ``lin``/``bias`` parameters and ``gcn_norm`` are reused verbatim) — only
+        the execution path changes. Requires ``gnn_type='GCNConv'``.
+        """
+        from torch_geometric.nn.conv.gcn_conv import gcn_norm
+
+        B = num_graphs
+        N = X_new.size(0) // (2 * B)
+        n = 2 * N
+
+        # Normalized, transposed augmented adjacency — cached (static per run).
+        key = (n, edge_index.size(1))
+        cache = getattr(self, "_folded_adj", None)
+        if cache is None or cache[0] != key:
+            aug_ei = self._build_augmented_edges(edge_index, N)   # [2, 3E] or [2, 2E+N]
+            if edge_attr is None:
+                aug_ew = None
+            else:
+                ew = edge_attr[:, 0] if edge_attr.dim() == 2 else edge_attr
+                tail = ew if not self.full_self_temporal else ew.mean().expand(N)
+                aug_ew = torch.cat([ew, ew, tail], dim=0)
+            ei_n, ew_n = gcn_norm(
+                aug_ei, aug_ew, num_nodes=n,
+                improved=self.gnn.improved, add_self_loops=self.gnn.add_self_loops,
+            )
+            # PyG aggregates src->dst (out[dst] += w * x[src]) => store A[dst, src].
+            # Explicitly opt in to sparse invariant checks (torch's documented way
+            # to silence its warning) — free here, since this is built once and
+            # cached, and it validates our indices are in-bounds.
+            with torch.sparse.check_sparse_tensor_invariants():
+                A = torch.sparse_coo_tensor(
+                    ei_n.flip(0), ew_n, (n, n), device=X_new.device
+                ).coalesce()
+            self._folded_adj = (key, A)
+        A = self._folded_adj[1]
+
+        # [2*B*N, d] -> [2N, B, d]: per-sample blocks of the single augmented graph.
+        d = X_new.size(1)
+        X3 = X_new.view(2, B, N, d).permute(0, 2, 1, 3).reshape(n, B, d)
+        Z = self.gnn.lin(X3)                                             # per-sample W
+        d_out = Z.size(-1)
+        Y = torch.sparse.mm(A, Z.reshape(n, B * d_out)).view(n, B, d_out)
+        if self.gnn.bias is not None:
+            Y = Y + self.gnn.bias
+        # Back to the batched flat layout [2*B*N, d_out].
+        return Y.view(2, N, B, d_out).permute(0, 2, 1, 3).reshape(2 * B * N, d_out)
 
     # ------------------------------------------------------------------
     # Forward
@@ -173,6 +252,7 @@ class TemporalGNNLayer(nn.Module):
         H_prev:    torch.Tensor,        # [N, hidden_dim]
         C_prev:    torch.Tensor,        # [N, hidden_dim]
         edge_attr: Optional[torch.Tensor] = None,
+        num_graphs: Optional[int] = None,
     ) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
         """
         Parameters
@@ -181,6 +261,11 @@ class TemporalGNNLayer(nn.Module):
         edge_index : COO-format edge list.                     [2, E]
         H_prev     : LSTM hidden state carried from time i-1.  [N, hidden_dim]
         C_prev     : LSTM cell state carried from time i-1.    [N, hidden_dim]
+        num_graphs : If set, ``X_i`` holds ``num_graphs`` independent samples on
+                     the SAME graph (batch-major), and ``edge_index``/``edge_attr``
+                     describe that single shared graph. The GCN then runs via the
+                     folded shared-adjacency path (GCNConv only). Default ``None``
+                     keeps the standard behavior (``edge_index`` is the full graph).
 
         Returns
         -------
@@ -198,9 +283,15 @@ class TemporalGNNLayer(nn.Module):
             X_proj = X_i
         X_new  = torch.cat([X_proj, H_i], dim=0)            # [2N, hidden_dim]
 
+        if num_graphs is not None:
+            if not isinstance(self.gnn, pyg_nn.GCNConv):
+                raise ValueError("num_graphs (folded batching) requires gnn_type='GCNConv'.")
+            X_prime = self._apply_gnn_folded(X_new, edge_index, edge_attr, num_graphs)
+            return X_prime[: X_i.size(0)], H_i, C_i
+
         # ── 3. Edge augmentation ────────────────────────────────────────
         aug_edges = self._build_augmented_edges(edge_index, X_i.size(0))
-        aug_edge_attr = self._build_augmented_edge_attr(edge_attr)
+        aug_edge_attr = self._build_augmented_edge_attr(edge_attr, X_i.size(0))
 
         # ── 4. Graph convolution on the augmented graph ─────────────────
         X_prime = self._apply_gnn(X_new, aug_edges, aug_edge_attr) # [2N, hidden_dim]
@@ -244,6 +335,7 @@ class TemporalGNNModel(nn.Module):
         num_layers: int  = 2,
         gnn_type:   str  = "GCNConv",
         dropout:    float = 0.0,
+        full_self_temporal: bool = False,
         **gnn_kwargs,
     ) -> None:
         super().__init__()
@@ -257,7 +349,9 @@ class TemporalGNNModel(nn.Module):
         for idx in range(num_layers):
             in_dim = input_dim if idx == 0 else hidden_dim
             self.layers.append(
-                TemporalGNNLayer(in_dim, hidden_dim, gnn_type, **gnn_kwargs)
+                TemporalGNNLayer(in_dim, hidden_dim, gnn_type,
+                                 full_self_temporal=full_self_temporal,
+                                 **gnn_kwargs)
             )
 
         self.act     = nn.ReLU()
@@ -298,6 +392,7 @@ class TemporalGNNModel(nn.Module):
         H_list:    List[torch.Tensor],
         C_list:    List[torch.Tensor],
         edge_attr: Optional[torch.Tensor] = None,
+        num_graphs: Optional[int] = None,
     ) -> Tuple[torch.Tensor, List[torch.Tensor], List[torch.Tensor]]:
         """
         Push one snapshot through all layers and return the prediction.
@@ -308,6 +403,7 @@ class TemporalGNNModel(nn.Module):
         edge_index : Edges for this snapshot.
         H_list     : Per-layer LSTM hidden states from the previous step.
         C_list     : Per-layer LSTM cell states from the previous step.
+        num_graphs : Optional folded-batch hint (see ``TemporalGNNLayer.forward``).
 
         Returns
         -------
@@ -322,7 +418,8 @@ class TemporalGNNModel(nn.Module):
 
         for idx, layer in enumerate(self.layers):
             X_prime, H_i, C_i = layer(
-                X, edge_index, H_list[idx], C_list[idx], edge_attr=edge_attr
+                X, edge_index, H_list[idx], C_list[idx], edge_attr=edge_attr,
+                num_graphs=num_graphs,
             )
             new_H.append(H_i)
             new_C.append(C_i)

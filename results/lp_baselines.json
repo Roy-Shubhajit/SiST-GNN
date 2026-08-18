@@ -1,0 +1,66 @@
+{
+  "num_neg": 1000,
+  "seed": 0,
+  "baselines": [
+    {
+      "dataset": "bitcoin-otc",
+      "num_snapshots": 273,
+      "num_nodes": 5881,
+      "edge_repeat_rate": 0.0,
+      "fixed-split/persistence": 0.0009990010294131935,
+      "fixed-split/degree": 0.1698058245570532,
+      "live-update/persistence": 0.0009990010084413156,
+      "live-update/degree": 0.23947359520175002
+    },
+    {
+      "dataset": "bitcoin-alpha",
+      "num_snapshots": 268,
+      "num_nodes": 3783,
+      "edge_repeat_rate": 0.0,
+      "fixed-split/persistence": 0.00099900101001064,
+      "fixed-split/degree": 0.07785470673762676,
+      "live-update/persistence": 0.0009990010165508265,
+      "live-update/degree": 0.18935217440506785
+    },
+    {
+      "dataset": "uci-message",
+      "num_snapshots": 29,
+      "num_nodes": 1899,
+      "edge_repeat_rate": 0.18377369034103405,
+      "fixed-split/persistence": 0.2439968834320704,
+      "fixed-split/degree": 0.12329019357760747,
+      "live-update/persistence": 0.2022578656490493,
+      "live-update/degree": 0.15690590333127016
+    },
+    {
+      "dataset": "reddit-title",
+      "num_snapshots": 174,
+      "num_nodes": 54075,
+      "edge_repeat_rate": 0.14309484506409512,
+      "fixed-split/persistence": 0.14483985304832458,
+      "fixed-split/degree": 0.3497395979033576,
+      "live-update/persistence": 0.142855908657085,
+      "live-update/degree": 0.38080676390945567
+    },
+    {
+      "dataset": "reddit-body",
+      "num_snapshots": 174,
+      "num_nodes": 35776,
+      "edge_repeat_rate": 0.10860240688913267,
+      "fixed-split/persistence": 0.14106937663422692,
+      "fixed-split/degree": 0.22894296629561317,
+      "live-update/persistence": 0.1339965851148429,
+      "live-update/degree": 0.27674972933496356
+    },
+    {
+      "dataset": "as-733",
+      "num_snapshots": 733,
+      "num_nodes": 7716,
+      "edge_repeat_rate": 0.9801675548705233,
+      "fixed-split/persistence": 0.9536419192681441,
+      "fixed-split/degree": 0.5224757057589453,
+      "live-update/persistence": 0.983718701564488,
+      "live-update/degree": 0.521432177698026
+    }
+  ]
+}

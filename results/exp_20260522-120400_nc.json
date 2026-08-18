@@ -1,0 +1,29 @@
+{
+  "timestamp": "20260522-120400",
+  "task": "node_classification",
+  "config": {
+    "dataset": "mooc",
+    "data_root": "datasets/nc",
+    "device": "cuda",
+    "model": "lstm",
+    "num_layers": 2,
+    "gnn_type": "GCNConv",
+    "lr": 0.001,
+    "hidden_dim": 256,
+    "num_epochs": 100,
+    "patience": 5,
+    "bucket_hours": 6.0,
+    "seed": 20,
+    "no_node_emb": false,
+    "no_edge_emb": false,
+    "pos_weight": "balanced",
+    "out_dir": "results"
+  },
+  "results": {
+    "mooc": {
+      "val_auc": 0.8442367147995488,
+      "test_auc": 0.8315754065090223,
+      "pos_weight": 95.49046321525886
+    }
+  }
+}

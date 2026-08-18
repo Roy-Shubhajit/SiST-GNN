@@ -1,0 +1,40 @@
+
+==================================================================
+ROLAND pipeline + SiST-GNN encoder
+  dataset=bitcoin-alpha  mode=live_update_fixed_split  decoder=mlp
+  node_features=learned  seed=4
+==================================================================
+  T=138  N=3783  start_compute_mrr=109
+  edge features: learned (raw dim 2)
+Snapshot 0109 | MRR 0.2761
+Snapshot 0110 | MRR 0.2049
+Snapshot 0111 | MRR 0.2932
+Snapshot 0112 | MRR 0.3172
+Snapshot 0113 | MRR 0.2323
+Snapshot 0114 | MRR 0.3223
+Snapshot 0115 | MRR 0.4970
+Snapshot 0116 | MRR 0.8091
+Snapshot 0117 | MRR 0.5601
+Snapshot 0118 | MRR 0.4915
+Snapshot 0119 | MRR 0.4086
+Snapshot 0120 | MRR 0.6145
+Snapshot 0121 | MRR 0.3754
+Snapshot 0122 | MRR 0.1724
+Snapshot 0123 | MRR 0.3203
+Snapshot 0124 | MRR 0.4605
+Snapshot 0125 | MRR 0.3479
+Snapshot 0126 | MRR 0.4196
+Snapshot 0127 | MRR 0.2488
+Snapshot 0128 | MRR 0.3711
+Snapshot 0129 | MRR 0.4126
+Snapshot 0130 | MRR 0.3259
+Snapshot 0131 | MRR 0.3506
+Snapshot 0132 | MRR 0.4893
+Snapshot 0133 | MRR 0.3759
+Snapshot 0134 | MRR 0.2888
+Snapshot 0135 | MRR 0.4875
+Snapshot 0136 | MRR 0.4108
+Snapshot 0137 | MRR 0.3475
+
+bitcoin-alpha  MRR = 0.387291  (29 eval snapshots)
+saved -> results/roland_port/live_update_fixed_split/mlp_node-learned_edge-learned/bitcoin-alpha/seed4/exp_20260813-172735_lp.json

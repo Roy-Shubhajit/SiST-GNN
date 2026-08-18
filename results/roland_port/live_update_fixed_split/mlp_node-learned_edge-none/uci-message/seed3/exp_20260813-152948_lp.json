@@ -1,0 +1,107 @@
+{
+  "timestamp": "20260813-152948",
+  "task": "link_prediction",
+  "pipeline": "roland_port",
+  "eval_method": "live_update_fixed_split",
+  "config": {
+    "dataset": "uci-message",
+    "mode": "live_update_fixed_split",
+    "data_root": "datasets/roland",
+    "device": "cuda",
+    "hidden_dim": 128,
+    "num_layers": 2,
+    "gnn_type": "GCNConv",
+    "decoder": "mlp",
+    "node_features": "learned",
+    "edge_features": "none",
+    "dropout": 0.1,
+    "weight_decay": 1e-05,
+    "lr": 0.001,
+    "num_epochs": 100,
+    "train_num_neg": 20,
+    "num_neg": 1000,
+    "seed": 3,
+    "out_dir": "results/roland_port/live_update_fixed_split/mlp_node-learned_edge-none/uci-message/seed3"
+  },
+  "results": {
+    "lp": {
+      "uci-message": {
+        "mrr": 0.23402778804302216,
+        "num_eval_snapshots": 17,
+        "per_snapshot_mrr": [
+          {
+            "t": 72,
+            "mrr": 0.14183823764324188
+          },
+          {
+            "t": 73,
+            "mrr": 0.3257264494895935
+          },
+          {
+            "t": 74,
+            "mrr": 0.27878016233444214
+          },
+          {
+            "t": 75,
+            "mrr": 0.3434111177921295
+          },
+          {
+            "t": 76,
+            "mrr": 0.2279164046049118
+          },
+          {
+            "t": 77,
+            "mrr": 0.21989256143569946
+          },
+          {
+            "t": 78,
+            "mrr": 0.3125475347042084
+          },
+          {
+            "t": 79,
+            "mrr": 0.19553856551647186
+          },
+          {
+            "t": 80,
+            "mrr": 0.27840375900268555
+          },
+          {
+            "t": 81,
+            "mrr": 0.2172555774450302
+          },
+          {
+            "t": 82,
+            "mrr": 0.19904550909996033
+          },
+          {
+            "t": 83,
+            "mrr": 0.23220129311084747
+          },
+          {
+            "t": 84,
+            "mrr": 0.1319003850221634
+          },
+          {
+            "t": 85,
+            "mrr": 0.23344844579696655
+          },
+          {
+            "t": 86,
+            "mrr": 0.2618206739425659
+          },
+          {
+            "t": 87,
+            "mrr": 0.22567354142665863
+          },
+          {
+            "t": 88,
+            "mrr": 0.15307217836380005
+          }
+        ],
+        "recall@1": 0.15421668023747556,
+        "recall@3": 0.24388514327652314,
+        "recall@10": 0.4028614145867965
+      }
+    }
+  }
+}

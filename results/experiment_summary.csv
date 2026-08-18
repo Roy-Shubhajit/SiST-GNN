@@ -1,0 +1,10 @@
+Dataset,Eval_Method,MRR,Timestamp
+as-733,live-update,0.572086,20260507-191717
+bitcoin-alpha,fixed-split,0.646096,20260507-190134
+bitcoin-alpha,live-update,0.350209,20260507-194013
+bitcoin-otc,fixed-split,0.771030,20260507-184844
+bitcoin-otc,live-update,0.367834,20260507-193827
+uci-message,fixed-split,0.312239,20260507-191429
+uci-message,live-update,0.176836,20260507-193800
+reddit-title,live-update,0.596425,20260507-210109
+reddit-body,live-update,0.574933,20260507-210728

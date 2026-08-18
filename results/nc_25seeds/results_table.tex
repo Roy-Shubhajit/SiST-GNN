@@ -1,0 +1,23 @@
+\begin{table}[t]
+\centering
+\caption{Dynamic node classification ROC-AUC (\%, mean$\,\pm\,$std)
+over 25 random seeds. Baseline numbers are reproduced from the original
+papers. The best result on each dataset is shown in \textbf{bold}.}
+\label{tab:nc_results}
+\begin{tabular}{lccc}
+\toprule
+\multirow{2}{*}{Methods} & \multicolumn{3}{c}{Node Classification} \\
+\cmidrule(lr){2-4}
+ & Wikipedia & Reddit & MOOC \\
+\midrule
+\textsc{GCN-ROLAND} & 58.86\textsubscript{$\pm$10.30} & 48.25\textsubscript{$\pm$9.57} & 49.93\textsubscript{$\pm$6.74} \\
+\textsc{GAT-ROLAND} & 62.81\textsubscript{$\pm$9.88} & 47.95\textsubscript{$\pm$8.42} & 50.01\textsubscript{$\pm$6.34} \\
+\textsc{TGAT} & 67.00\textsubscript{$\pm$5.35} & 53.64\textsubscript{$\pm$5.50} & 59.27\textsubscript{$\pm$4.43} \\
+\textsc{TGN} & 50.61\textsubscript{$\pm$13.60} & 49.54\textsubscript{$\pm$6.23} & 50.33\textsubscript{$\pm$4.47} \\
+\textsc{TREND} & 69.92\textsubscript{$\pm$9.27} & 64.85\textsubscript{$\pm$4.71} & 66.79\textsubscript{$\pm$5.44} \\
+\textsc{GraphMixer} & 65.43\textsubscript{$\pm$4.21} & 60.21\textsubscript{$\pm$5.36} & 63.72\textsubscript{$\pm$4.98} \\
+\midrule
+\textbf{SiST-GNN (Ours)} & \textbf{87.19\textsubscript{$\pm$0.90}} & \textbf{67.92\textsubscript{$\pm$1.57}} & \textbf{70.06\textsubscript{$\pm$0.69}} \\
+\bottomrule
+\end{tabular}
+\end{table}

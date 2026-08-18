@@ -1,0 +1,54 @@
+{
+  "timestamp": "20260816-192538",
+  "task": "link_prediction",
+  "pipeline": "roland_port",
+  "eval_method": "paper_fixed_split",
+  "config": {
+    "dataset": "uci-message",
+    "mode": "paper_fixed_split",
+    "data_root": "datasets/roland",
+    "undirected": "yes",
+    "min_edges": 10,
+    "device": "cuda",
+    "hidden_dim": 128,
+    "num_layers": 2,
+    "gnn_type": "GCNConv",
+    "decoder": "dot",
+    "node_features": "learned",
+    "edge_features": "learned",
+    "dropout": 0.1,
+    "weight_decay": 1e-05,
+    "lr": 0.001,
+    "num_epochs": 100,
+    "train_num_neg": 20,
+    "loss": "margin",
+    "num_neg": 1000,
+    "seed": 1,
+    "out_dir": "/hdfs1/Data/Shubhajit/Project/SiST-GNN/results/ablation_port/num_layers/num_layers-2/uci-message/seed1"
+  },
+  "results": {
+    "lp": {
+      "uci-message": {
+        "mrr": 0.224866583943367,
+        "num_eval_snapshots": 3,
+        "per_snapshot_mrr": [
+          {
+            "t": 25,
+            "mrr": 0.16247141361236572
+          },
+          {
+            "t": 26,
+            "mrr": 0.2828350067138672
+          },
+          {
+            "t": 27,
+            "mrr": 0.2292933315038681
+          }
+        ],
+        "recall@1": 0.1515485867857933,
+        "recall@3": 0.25985288123289746,
+        "recall@10": 0.3701509932676951
+      }
+    }
+  }
+}

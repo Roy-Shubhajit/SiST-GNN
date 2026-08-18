@@ -65,7 +65,7 @@ class RunConfig:
     bucket_hours:      float = 6.0
     pos_weight:        str   = "none"          # "none" | "balanced" | "sqrt" | float-string
     lr:                float = 1e-3
-    num_epochs:        int   = 50
+    num_epochs:        int   = 100
     patience:          int   = 5
     use_node_emb:      bool  = True
     use_edge_emb:      bool  = True

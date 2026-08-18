@@ -1,0 +1,26 @@
+{
+  "dataset": "reddit",
+  "seed": 18,
+  "config": {
+    "data_root": "datasets/nc",
+    "out_dir": "results/nc_25seeds",
+    "device": "cuda",
+    "num_layers": 2,
+    "gnn_type": "SAGEConv",
+    "lr": 0.001,
+    "hidden_dim": 256,
+    "bucket_hours": 3.0,
+    "pos_weight": "balanced",
+    "num_epochs": 50,
+    "patience": 5,
+    "num_seeds": 25,
+    "datasets": "wikipedia,reddit,mooc"
+  },
+  "metrics": {
+    "val_auc": 0.6083129748547076,
+    "test_auc": 0.6864264765279284,
+    "pos_weight": 2484.4074074074074,
+    "seed": 18,
+    "elapsed_s": 28.855185747146606
+  }
+}

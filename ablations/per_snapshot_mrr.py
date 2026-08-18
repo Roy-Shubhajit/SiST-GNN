@@ -16,54 +16,30 @@ import os
 import sys
 
 import torch
-import torch.nn.functional as F
 
 from _common import (
     RunConfig, build_model, load_lp_dataset, parse_dataset_arg, save_csv,
 )
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir)))
-from evaluate_lp import evaluate_mrr, get_negative_samples  # noqa: E402
+from train_lp import train_live_update  # noqa: E402
 
 
 DEFAULT_DATASETS = ["bitcoin-otc", "bitcoin-alpha"]
 
 
 def trace_one(cfg: RunConfig) -> list[dict]:
-    """Mirror `train_live_update` while recording the per-snapshot MRR."""
+    """Run the live-update protocol and keep its per-snapshot MRR trace."""
     snapshots = load_lp_dataset(cfg.dataset)
     num_nodes = snapshots[0].num_nodes
     model = build_model(cfg, num_nodes)
     optimiser = torch.optim.Adam(model.parameters(), lr=cfg.lr)
 
-    rows: list[dict] = []
-    device = torch.device(cfg.device)
-    for t, snap in enumerate(snapshots):
-        snap = snap.to(device)
-        if snap.edge_index.size(1) == 0:
-            continue
-        if t > 0:
-            mrr = evaluate_mrr(model, snap)
-            rows.append({
-                "dataset":  cfg.dataset,
-                "snapshot": t,
-                "mrr":      float(mrr),
-            })
-        # One-step update on this snapshot (mirrors train_live_update).
-        prev_h, prev_c = model.clone_states()
-        model.train()
-        for _ in range(cfg.num_epochs):
-            model.load_states(prev_h, prev_c)
-            model.load_states(*model.clone_states())
-            optimiser.zero_grad()
-            emb = model(snap.x, snap.edge_index, snap.edge_attr, update_state=True)
-            pos = (emb[snap.edge_index[0]] * emb[snap.edge_index[1]]).sum(-1)
-            neg_e = get_negative_samples(snap.edge_index, snap.num_nodes, num_neg=1)
-            neg = (emb[neg_e[0]] * emb[neg_e[1]]).sum(-1)
-            loss = F.margin_ranking_loss(pos, neg, torch.ones_like(pos), margin=1.0)
-            loss.backward()
-            model.detach_states()
-            optimiser.step()
-    return rows
+    res = train_live_update(snapshots, model, optimiser,
+                            epochs_per_snapshot=cfg.num_epochs)
+    return [
+        {"dataset": cfg.dataset, "snapshot": r["t"], "mrr": float(r["mrr"])}
+        for r in res["per_snapshot_mrr"]
+    ]
 
 
 def main() -> None:

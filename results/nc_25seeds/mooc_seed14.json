@@ -1,0 +1,26 @@
+{
+  "dataset": "mooc",
+  "seed": 14,
+  "config": {
+    "data_root": "datasets/nc",
+    "out_dir": "results/nc_25seeds",
+    "device": "cuda",
+    "num_layers": 2,
+    "gnn_type": "SAGEConv",
+    "lr": 0.001,
+    "hidden_dim": 256,
+    "bucket_hours": 3.0,
+    "pos_weight": "balanced",
+    "num_epochs": 50,
+    "patience": 5,
+    "num_seeds": 25,
+    "datasets": "wikipedia,reddit,mooc"
+  },
+  "metrics": {
+    "val_auc": 0.7277827822828994,
+    "test_auc": 0.7016049383134246,
+    "pos_weight": 95.80925050641459,
+    "seed": 14,
+    "elapsed_s": 25.41387128829956
+  }
+}

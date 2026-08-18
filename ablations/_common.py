@@ -44,7 +44,7 @@ class RunConfig:
     num_layers:     int   = 2
     gnn_type:       str   = "GCNConv"
     eval_method:    str   = "live-update"     # "live-update" | "fixed-split"
-    num_epochs:     int   = 50
+    num_epochs:     int   = 100
     lr:             float = 1e-3
     use_node_emb:   bool  = True
     seed:           int   = 0
@@ -76,9 +76,9 @@ def run_one(cfg: RunConfig) -> Dict[str, Any]:
     optimiser = torch.optim.Adam(model.parameters(), lr=cfg.lr)
 
     if cfg.eval_method == "fixed-split":
-        mrr = train_fixed_split(snapshots, model, optimiser, num_epochs=cfg.num_epochs)
+        res = train_fixed_split(snapshots, model, optimiser, num_epochs=cfg.num_epochs)
     else:
-        mrr = train_live_update(snapshots, model, optimiser,
+        res = train_live_update(snapshots, model, optimiser,
                                 epochs_per_snapshot=cfg.num_epochs)
 
     del model, optimiser
@@ -92,7 +92,9 @@ def run_one(cfg: RunConfig) -> Dict[str, Any]:
         "gnn_type":    cfg.gnn_type,
         "eval_method": cfg.eval_method,
         "seed":        cfg.seed,
-        "mrr":         float(mrr),
+        "mrr":         float(res["mrr"]),
+        "recall@1":    float(res["recall@1"]),
+        "recall@10":   float(res["recall@10"]),
     }
 
 

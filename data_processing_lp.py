@@ -56,6 +56,60 @@ def download_and_extract(dataset_name: str, data_root: str = "datasets/roland") 
     
     return extracted_path
 
+# ROLAND's own settings for the three fixed-split datasets, taken from
+# run/replication_configs/table2/*.yaml and graphgym/contrib/loader/roland_*.py.
+#   snapshot_freq  - split_by_seconds(edge_time // freq_sec), NOT calendar weeks
+#   undirected     - roland_btc.py appends reversed edges when
+#                    cfg.train.mode == 'live_update_fixed_split' (the mode those
+#                    configs use). roland_ucimsg.py does not.
+#   start_compute_mrr - MRR is only reported from this snapshot onwards.
+ROLAND_SPEC = {
+    "bitcoin-alpha": {"freq_sec": 1_200_000, "undirected": True,  "start_compute_mrr": 109},
+    "bitcoin-otc":   {"freq_sec": 1_200_000, "undirected": True,  "start_compute_mrr": 110},
+    "uci-message":   {"freq_sec":   190_080, "undirected": False, "start_compute_mrr": 72},
+}
+
+
+def process_snapshots_seconds(df: pd.DataFrame, src_col: str, dst_col: str,
+                              time_col: str, freq_sec: int,
+                              undirected: bool = False) -> List[Data]:
+    """ROLAND's ``split_by_seconds``: bucket edges by ``edge_time // freq_sec``.
+
+    Unlike calendar-frequency grouping this produces fixed-width buckets aligned
+    to the Unix epoch, which is what ROLAND's configs use for these datasets.
+    ``undirected`` appends the reversed edge set first, mirroring
+    ``roland_btc.py``'s augmentation under ``live_update_fixed_split``.
+    """
+    df = df.sort_values(by=time_col).reset_index(drop=True)
+
+    all_nodes = pd.concat([df[src_col], df[dst_col]]).unique()
+    node_map = {nid: i for i, nid in enumerate(all_nodes)}
+    num_nodes = len(node_map)
+
+    src = df[src_col].map(node_map).to_numpy()
+    dst = df[dst_col].map(node_map).to_numpy()
+    t = df[time_col].to_numpy().astype(np.int64)
+
+    if undirected:
+        src, dst = np.concatenate([src, dst]), np.concatenate([dst, src])
+        t = np.concatenate([t, t])
+
+    lo, hi = t.min(), t.max()
+    scaled = (t - lo) / (hi - lo) * 2.0 if hi > lo else np.zeros_like(t, dtype=float)
+
+    x_dummy = torch.ones((num_nodes, 1), dtype=torch.float)
+    bucket = t // freq_sec
+
+    snapshots: List[Data] = []
+    for b in np.unique(np.sort(bucket)):
+        m = bucket == b
+        edge_index = torch.tensor(np.stack([src[m], dst[m]]), dtype=torch.long)
+        edge_attr = torch.tensor(scaled[m], dtype=torch.float).unsqueeze(1)
+        snapshots.append(Data(x=x_dummy, edge_index=edge_index,
+                              edge_attr=edge_attr, num_nodes=num_nodes))
+    return snapshots
+
+
 def process_snapshots(df: pd.DataFrame, src_col: str, dst_col: str, time_col: str, freq: str = "W", time_unit: str = 's') -> List[Data]:
     """
     Groups dataframe by a temporal frequency and returns a list of PyG Data objects (snapshots).
@@ -105,25 +159,43 @@ def process_snapshots(df: pd.DataFrame, src_col: str, dst_col: str, time_col: st
         
     return snapshots
 
-def load_lp_dataset(dataset_name: str, data_root: str = "datasets/roland") -> List[Data]:
+def load_lp_dataset(dataset_name: str, data_root: str = "datasets/roland",
+                    snapshot_mode: str = "paper") -> List[Data]:
     """
     Loads and processes a specific dataset into discrete temporal snapshots.
+
+    ``snapshot_mode``:
+      * ``"paper"``  - weekly calendar bins, directed (what the submission used).
+      * ``"roland"`` - ROLAND's own construction for that dataset (see
+        :data:`ROLAND_SPEC`): fixed-width second buckets, plus the reversed-edge
+        augmentation for the bitcoin datasets. Falls back to weekly bins for
+        datasets ROLAND's table-2 configs do not cover.
     """
     print(f"Loading {dataset_name}...")
     extracted_path = download_and_extract(dataset_name, data_root)
-    
+
+    spec = ROLAND_SPEC.get(dataset_name) if snapshot_mode == "roland" else None
+    if snapshot_mode == "roland" and spec is None:
+        print(f"  (no ROLAND table-2 spec for {dataset_name}; using weekly bins)")
+
+    CSV = {
+        "bitcoin-alpha": ("soc-sign-bitcoinalpha.csv", ",", ['src', 'dst', 'rating', 'time']),
+        "bitcoin-otc":   ("soc-sign-bitcoinotc.csv",   ",", ['src', 'dst', 'rating', 'time']),
+        "uci-message":   ("CollegeMsg.txt",            " ", ['src', 'dst', 'time']),
+    }
+
     snapshots = []
-    if dataset_name == "bitcoin-alpha":
-        df = pd.read_csv(os.path.join(extracted_path, "soc-sign-bitcoinalpha.csv"), names=['src', 'dst', 'rating', 'time'])
-        snapshots = process_snapshots(df, 'src', 'dst', 'time', freq="W")
-
-    elif dataset_name == "bitcoin-otc":
-        df = pd.read_csv(os.path.join(extracted_path, "soc-sign-bitcoinotc.csv"), names=['src', 'dst', 'rating', 'time'])
-        snapshots = process_snapshots(df, 'src', 'dst', 'time', freq="W")
-
-    elif dataset_name == "uci-message":
-        df = pd.read_csv(os.path.join(extracted_path, "CollegeMsg.txt"), sep=' ', names=['src', 'dst', 'time'])
-        snapshots = process_snapshots(df, 'src', 'dst', 'time', freq="W")
+    if dataset_name in CSV:
+        fname, sep, names = CSV[dataset_name]
+        df = pd.read_csv(os.path.join(extracted_path, fname), sep=sep, names=names)
+        if spec is not None:
+            print(f"  ROLAND construction: freq={spec['freq_sec']}s "
+                  f"undirected={spec['undirected']}")
+            snapshots = process_snapshots_seconds(
+                df, 'src', 'dst', 'time',
+                freq_sec=spec['freq_sec'], undirected=spec['undirected'])
+        else:
+            snapshots = process_snapshots(df, 'src', 'dst', 'time', freq="W")
 
     elif dataset_name == "reddit-body":
         df = pd.read_csv(os.path.join(extracted_path, "soc-redditHyperlinks-body.tsv"), sep='\t')

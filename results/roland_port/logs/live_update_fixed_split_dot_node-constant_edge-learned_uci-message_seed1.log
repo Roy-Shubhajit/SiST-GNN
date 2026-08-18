@@ -1,0 +1,28 @@
+
+==================================================================
+ROLAND pipeline + SiST-GNN encoder
+  dataset=uci-message  mode=live_update_fixed_split  decoder=dot
+  node_features=constant  seed=1
+==================================================================
+  T=89  N=1899  start_compute_mrr=72
+  edge features: learned (raw dim 1)
+Snapshot 0072 | MRR 0.2164
+Snapshot 0073 | MRR 0.2023
+Snapshot 0074 | MRR 0.1955
+Snapshot 0075 | MRR 0.2381
+Snapshot 0076 | MRR 0.3145
+Snapshot 0077 | MRR 0.1560
+Snapshot 0078 | MRR 0.2534
+Snapshot 0079 | MRR 0.1750
+Snapshot 0080 | MRR 0.1032
+Snapshot 0081 | MRR 0.1087
+Snapshot 0082 | MRR 0.1446
+Snapshot 0083 | MRR 0.1161
+Snapshot 0084 | MRR 0.1281
+Snapshot 0085 | MRR 0.0315
+Snapshot 0086 | MRR 0.1434
+Snapshot 0087 | MRR 0.0397
+Snapshot 0088 | MRR 0.1580
+
+uci-message  MRR = 0.160257  (17 eval snapshots)
+saved -> results/roland_port/live_update_fixed_split/dot_node-constant_edge-learned/uci-message/seed1/exp_20260813-143152_lp.json

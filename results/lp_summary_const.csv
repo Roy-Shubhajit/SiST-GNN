@@ -1,0 +1,10 @@
+Dataset,Eval_Method,Mean_MRR,Std_MRR,Num_Seeds
+bitcoin-otc,fixed-split,0.176159,0.043972,5
+bitcoin-alpha,fixed-split,0.090774,0.016712,5
+uci-message,fixed-split,0.191309,0.024759,5
+as-733,live-update,0.919608,0.000000,1
+reddit-title,live-update,0.420065,0.001092,5
+reddit-body,live-update,0.306398,0.000683,5
+uci-message,live-update,0.144608,0.002758,5
+bitcoin-otc,live-update,0.247065,0.001671,5
+bitcoin-alpha,live-update,0.199053,0.003154,5

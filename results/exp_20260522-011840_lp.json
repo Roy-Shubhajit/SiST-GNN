@@ -1,0 +1,26 @@
+{
+  "timestamp": "20260522-011840",
+  "task": "link_prediction",
+  "eval_method": "live-update",
+  "config": {
+    "dataset": "reddit-title",
+    "data_root": "datasets/roland",
+    "device": "cuda",
+    "eval_method": "live-update",
+    "model": "lstm",
+    "num_layers": 2,
+    "gnn_type": "GCNConv",
+    "lr": 0.001,
+    "hidden_dim": 128,
+    "num_epochs": 100,
+    "seed": 2,
+    "out_dir": "results"
+  },
+  "results": {
+    "lp": {
+      "reddit-title": {
+        "mrr": 0.7185155119682323
+      }
+    }
+  }
+}

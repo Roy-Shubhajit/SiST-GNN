@@ -4,7 +4,7 @@
 
 A unified framework for dynamic graph representation learning that performs
 *simultaneous* spatial and temporal message passing on a temporally
-augmented graph. The same backbone is used for two downstream tasks:
+augmented graph. The same backbone is used for three downstream tasks:
 
 | Task                         | Datasets                                                | Metric  |
 |------------------------------|---------------------------------------------------------|---------|
@@ -29,6 +29,7 @@ SiST-GNN/
 ├── data_processing_nc.py      # JODIE NC loaders + benchtemp preprocessing + bucketing
 ├── train_nc.py                # NCStatefulWrapper + fixed-split training/eval
 ├── run_25seeds_nc.py          # 25-seed NC sweep used for the paper table
+│
 ├── build_lp_table.py          # Build LP LaTeX tables (fixed-split + live-update)
 ├── build_nc_table.py          # Build NC LaTeX table from a 25-seed summary
 │
@@ -36,7 +37,7 @@ SiST-GNN/
 │
 ├── datasets/
 │   ├── roland/                # LP raw + extracted dataset files
-│   └── nc/                    # NC raw + benchtemp-preprocessed (ml_*) files
+│   ├── nc/                    # NC raw + benchtemp-preprocessed (ml_*) files
 │
 ├── results/                   # All experiment JSON logs + aggregated CSVs
 │
@@ -85,12 +86,12 @@ bash run.sh
 bash run.sh --task lp
 bash run.sh --task nc
 
-# Quick smoke test: 2 epochs, fixed-split, 1 seed, 1 small dataset per task
+# Quick smoke test: 2 epochs, 1 seed, 1 small dataset per task
 bash run.sh --verify
 
 # Hyper-parameter overrides:
-bash run.sh --task lp  --seeds 5 --epochs 400 --lp-eval fixed-split
-bash run.sh --task nc  --seeds 25 --epochs 50 --nc-datasets wikipedia,reddit
+bash run.sh --task lp        --seeds 5 --epochs 400 --lp-eval fixed-split
+bash run.sh --task nc        --seeds 25 --epochs 50 --nc-datasets wikipedia,reddit
 ```
 
 ### Outputs
@@ -118,6 +119,7 @@ bash run.sh --task nc  --seeds 25 --epochs 50 --nc-datasets wikipedia,reddit
 | `--lp-eval`      | `both`                                                        | `fixed-split` / `live-update` / `both` |
 | `--lp-datasets`  | `bitcoin-otc,bitcoin-alpha,uci-message,reddit-title,reddit-body,as-733` | Comma-separated subset |
 | `--nc-datasets`  | `wikipedia,reddit,mooc`                                       | Comma-separated subset |
+| `--fc-datasets`  | `sd`                                                          | Comma-separated subset (`sd`/`gba`/`gla`/`ca`/`synthetic`) |
 | `--out-dir`      | `results`                                                     | Where logs and summaries go |
 | `--python`       | `python`                                                      | Interpreter to use |
 
@@ -157,8 +159,8 @@ Outputs land in `ablations/results/*.csv` and `ablations/figures/*.pdf`.
 
 ## Direct script usage
 
-The unified runners are thin wrappers around two Python entrypoints; both
-expose the full hyper-parameter surface for fine-grained experimentation:
+The unified runners are thin wrappers around three Python entrypoints; each
+exposes the full hyper-parameter surface for fine-grained experimentation:
 
 ```bash
 # LP (single config)
@@ -172,6 +174,7 @@ python main_nc.py \
     --dataset wikipedia --model lstm --gnn-type GCNConv \
     --num-layers 2 --hidden-dim 128 --bucket-hours 6 \
     --num-epochs 50 --patience 5 --seed 0
-```
 
----
+
+# FC smoke test — built-in synthetic dataset, no download required
+```

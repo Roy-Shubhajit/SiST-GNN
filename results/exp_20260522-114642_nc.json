@@ -1,0 +1,29 @@
+{
+  "timestamp": "20260522-114642",
+  "task": "node_classification",
+  "config": {
+    "dataset": "wikipedia",
+    "data_root": "datasets/nc",
+    "device": "cuda",
+    "model": "lstm",
+    "num_layers": 2,
+    "gnn_type": "GCNConv",
+    "lr": 0.001,
+    "hidden_dim": 256,
+    "num_epochs": 100,
+    "patience": 5,
+    "bucket_hours": 6.0,
+    "seed": 10,
+    "no_node_emb": false,
+    "no_edge_emb": false,
+    "pos_weight": "balanced",
+    "out_dir": "results"
+  },
+  "results": {
+    "wikipedia": {
+      "val_auc": 0.9446554422480736,
+      "test_auc": 0.7904920820368078,
+      "pos_weight": 708.5612903225806
+    }
+  }
+}

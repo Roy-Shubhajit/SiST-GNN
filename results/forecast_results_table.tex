@@ -1,0 +1,23 @@
+% Requires \usepackage{booktabs,multirow}
+\begin{table}[t]\centering\footnotesize\setlength{\tabcolsep}{3pt}
+\caption{Traffic-forecasting performance on LargeST (MAE / RMSE / MAPE\%). Baselines reproduced from LargeST Table 2; \textbf{bold} = best per column. ``Average'' is over all 12 horizons.}
+\label{tab:forecast_results}
+\begin{tabular}{llcccccccccccc}
+\toprule
+& & \multicolumn{3}{c}{Horizon 3} & \multicolumn{3}{c}{Horizon 6} & \multicolumn{3}{c}{Horizon 12} & \multicolumn{3}{c}{Average} \\
+\cmidrule(lr){3-5}\cmidrule(lr){6-8}\cmidrule(lr){9-11}\cmidrule(lr){12-14}
+Data & Method & MAE & RMSE & MAPE & MAE & RMSE & MAPE & MAE & RMSE & MAPE & MAE & RMSE & MAPE \\
+\midrule
+\multirow{12}{*}{SD} & HL & 33.61 & 50.97 & 20.77 & 57.80 & 84.92 & 37.73 & 101.74 & 140.14 & 76.84 & 60.79 & 87.40 & 41.88 \\
+ & LSTM & 19.03 & 30.53 & 11.81 & 25.84 & 40.87 & 16.44 & 37.63 & 59.07 & 25.45 & 26.44 & 41.73 & 17.20 \\
+ & DCRNN & 17.14 & 27.47 & 11.12 & 20.99 & 33.29 & 13.95 & 26.99 & 42.86 & 18.67 & 21.03 & 33.37 & 14.13 \\
+ & AGCRN & 15.71 & 27.85 & 11.48 & 18.06 & 31.51 & 13.06 & 21.86 & 39.44 & 16.52 & 18.09 & 32.01 & 13.28 \\
+ & STGCN & 17.45 & 29.99 & 12.42 & 19.55 & 33.69 & 13.68 & 23.21 & 41.23 & 16.32 & 19.67 & 34.14 & 13.86 \\
+ & GWNET & 15.24 & 25.13 & 9.86 & 17.74 & 29.51 & 11.70 & \textbf{21.56} & \textbf{36.82} & 15.13 & \textbf{17.74} & 29.62 & 11.88 \\
+ & ASTGCN & 19.56 & 31.33 & 12.18 & 24.13 & 37.95 & 15.38 & 30.96 & 49.17 & 21.98 & 23.70 & 37.63 & 15.65 \\
+ & STTN & 16.22 & 26.22 & 10.63 & 18.76 & 30.98 & 12.80 & 22.62 & 39.09 & 16.14 & 18.69 & 31.11 & 12.82 \\
+ & STGODE & 16.75 & 28.04 & 11.00 & 19.71 & 33.56 & 13.16 & 23.67 & 42.12 & 16.58 & 19.55 & 33.57 & 13.22 \\
+ & DSTAGNN & 18.13 & 28.96 & 11.38 & 21.71 & 34.44 & 13.93 & 27.51 & 43.95 & 19.34 & 21.82 & 34.68 & 14.40 \\
+ & DGCRN & 15.34 & 25.35 & 10.01 & 18.05 & 30.06 & 11.90 & 22.06 & 37.51 & 15.27 & 18.02 & 30.09 & 12.07 \\
+ & D2STGNN & \textbf{14.92} & \textbf{24.95} & \textbf{9.56} & \textbf{17.52} & \textbf{29.24} & \textbf{11.36} & 22.62 & 37.14 & \textbf{14.86} & 17.85 & \textbf{29.51} & \textbf{11.54} \\
+\bottomrule\end{tabular}\end{table}

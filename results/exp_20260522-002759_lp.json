@@ -1,0 +1,26 @@
+{
+  "timestamp": "20260522-002759",
+  "task": "link_prediction",
+  "eval_method": "live-update",
+  "config": {
+    "dataset": "bitcoin-alpha",
+    "data_root": "datasets/roland",
+    "device": "cuda",
+    "eval_method": "live-update",
+    "model": "lstm",
+    "num_layers": 2,
+    "gnn_type": "GCNConv",
+    "lr": 0.001,
+    "hidden_dim": 128,
+    "num_epochs": 100,
+    "seed": 4,
+    "out_dir": "results"
+  },
+  "results": {
+    "lp": {
+      "bitcoin-alpha": {
+        "mrr": 0.49069194462192195
+      }
+    }
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "timestamp": "20260522-075512",
+  "task": "link_prediction",
+  "eval_method": "fixed-split",
+  "config": {
+    "dataset": "bitcoin-otc",
+    "data_root": "datasets/roland",
+    "device": "cuda",
+    "eval_method": "fixed-split",
+    "model": "lstm",
+    "num_layers": 2,
+    "gnn_type": "GCNConv",
+    "lr": 0.001,
+    "hidden_dim": 128,
+    "num_epochs": 100,
+    "seed": 1,
+    "out_dir": "results"
+  },
+  "results": {
+    "lp": {
+      "bitcoin-otc": {
+        "mrr": 0.8207291683980397
+      }
+    }
+  }
+}

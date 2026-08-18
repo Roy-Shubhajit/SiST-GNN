@@ -1,0 +1,39 @@
+
+==================================================================
+ROLAND pipeline + SiST-GNN encoder
+  dataset=bitcoin-otc  mode=paper_fixed_split  decoder=dot
+  node_features=learned  loss=bce  seed=4
+==================================================================
+  snapshot filter (>= 10 edges): 279 -> 273
+  T=273  N=5881  start_compute_mrr=246
+  edge features: learned (raw dim 2)
+Snapshot 0246 | MRR 0.1642
+Snapshot 0247 | MRR 0.0154
+Snapshot 0248 | MRR 0.2057
+Snapshot 0249 | MRR 0.0781
+Snapshot 0250 | MRR 0.0788
+Snapshot 0251 | MRR 0.0282
+Snapshot 0252 | MRR 0.1160
+Snapshot 0253 | MRR 0.2624
+Snapshot 0254 | MRR 0.1243
+Snapshot 0255 | MRR 0.1322
+Snapshot 0256 | MRR 0.1903
+Snapshot 0257 | MRR 0.1829
+Snapshot 0258 | MRR 0.0257
+Snapshot 0259 | MRR 0.2123
+Snapshot 0260 | MRR 0.0693
+Snapshot 0261 | MRR 0.1983
+Snapshot 0262 | MRR 0.0406
+Snapshot 0263 | MRR 0.5416
+Snapshot 0264 | MRR 0.2194
+Snapshot 0265 | MRR 0.0116
+Snapshot 0266 | MRR 0.0542
+Snapshot 0267 | MRR 0.0611
+Snapshot 0268 | MRR 0.0765
+Snapshot 0269 | MRR 0.3114
+Snapshot 0270 | MRR 0.0531
+Snapshot 0271 | MRR 0.1229
+Snapshot 0272 | MRR 0.0650
+
+bitcoin-otc  MRR = 0.134863  (27 eval snapshots)
+saved -> results/roland_port/paper_fixed_split_und-yes_loss-bce/dot_node-learned_edge-learned/bitcoin-otc/seed4/exp_20260814-161744_lp.json

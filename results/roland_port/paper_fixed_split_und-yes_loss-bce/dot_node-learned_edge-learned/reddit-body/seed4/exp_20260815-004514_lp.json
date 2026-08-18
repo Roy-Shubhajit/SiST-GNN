@@ -1,0 +1,114 @@
+{
+  "timestamp": "20260815-004514",
+  "task": "link_prediction",
+  "pipeline": "roland_port",
+  "eval_method": "paper_fixed_split",
+  "config": {
+    "dataset": "reddit-body",
+    "mode": "paper_fixed_split",
+    "data_root": "datasets/roland",
+    "undirected": "yes",
+    "min_edges": 10,
+    "device": "cuda",
+    "hidden_dim": 128,
+    "num_layers": 2,
+    "gnn_type": "GCNConv",
+    "decoder": "dot",
+    "node_features": "learned",
+    "edge_features": "learned",
+    "dropout": 0.1,
+    "weight_decay": 1e-05,
+    "lr": 0.001,
+    "num_epochs": 100,
+    "train_num_neg": 20,
+    "loss": "bce",
+    "num_neg": 1000,
+    "seed": 4,
+    "out_dir": "results/roland_port/paper_fixed_split_und-yes_loss-bce/dot_node-learned_edge-learned/reddit-body/seed4"
+  },
+  "results": {
+    "lp": {
+      "reddit-body": {
+        "mrr": 0.11440589113367929,
+        "num_eval_snapshots": 18,
+        "per_snapshot_mrr": [
+          {
+            "t": 160,
+            "mrr": 0.105789415538311
+          },
+          {
+            "t": 161,
+            "mrr": 0.06817749887704849
+          },
+          {
+            "t": 162,
+            "mrr": 0.12608076632022858
+          },
+          {
+            "t": 163,
+            "mrr": 0.10537924617528915
+          },
+          {
+            "t": 164,
+            "mrr": 0.1209874376654625
+          },
+          {
+            "t": 165,
+            "mrr": 0.13145042955875397
+          },
+          {
+            "t": 166,
+            "mrr": 0.12984201312065125
+          },
+          {
+            "t": 167,
+            "mrr": 0.12975716590881348
+          },
+          {
+            "t": 168,
+            "mrr": 0.12092427164316177
+          },
+          {
+            "t": 169,
+            "mrr": 0.0975361242890358
+          },
+          {
+            "t": 170,
+            "mrr": 0.09827112406492233
+          },
+          {
+            "t": 171,
+            "mrr": 0.13248874247074127
+          },
+          {
+            "t": 172,
+            "mrr": 0.11120609939098358
+          },
+          {
+            "t": 173,
+            "mrr": 0.0921020656824112
+          },
+          {
+            "t": 174,
+            "mrr": 0.11529605835676193
+          },
+          {
+            "t": 175,
+            "mrr": 0.1251312494277954
+          },
+          {
+            "t": 176,
+            "mrr": 0.11660225689411163
+          },
+          {
+            "t": 177,
+            "mrr": 0.13228407502174377
+          }
+        ],
+        "recall@1": 0.06220555222696728,
+        "recall@3": 0.12263813739021619,
+        "recall@10": 0.22044321646293005
+      }
+    }
+  }
+}
